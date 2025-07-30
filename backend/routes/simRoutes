@@ -1,0 +1,24 @@
+const express = require('express');
+const router = express.Router();
+const simController = require('../controllers/simController');
+const upload = require('../middlewares/upload');
+
+// Subir archivo Excel
+router.post('/upload', 
+  upload.single('file'), // 'file' debe coincidir con el nombre del campo en Postman
+  simController.uploadSims
+);
+
+// Obtener todos los SIMs (con filtro opcional por estado)
+router.get('/', async (req, res) => {
+  try {
+    const { estado } = req.query;
+    const where = estado ? { estado } : {};
+    const sims = await Sim.findAll({ where });
+    res.json(sims);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = router;
